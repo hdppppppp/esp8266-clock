@@ -28,7 +28,7 @@ static void drawWifiBars(int rssi) {
   for (int i = 0; i < 4; i++) {
     int h = 2 + i * 2;
     int x = 108 + i * 5;
-    int y = 63 - h;
+    int y = 9 - h;
     if (i < bars) {
       display.drawBox(x, y, 3, h);
     } else {
@@ -46,29 +46,22 @@ static void renderClock() {
   display.clearBuffer();
 
   display.setFont(u8g2_font_6x12_tf);
-  if (valid) {
-    display.drawStr(0, 9, WEEKDAYS[t.tm_wday]);
-    char sec[4];
-    snprintf(sec, sizeof(sec), "%02d", t.tm_sec);
-    display.drawStr(128 - display.getStrWidth(sec), 9, sec);
-  }
+  if (valid) display.drawStr(0, 9, WEEKDAYS[t.tm_wday]);
+  drawWifiBars(WiFi.RSSI());
 
-  display.setFont(u8g2_font_logisoso42_tn);
+  char timebuf[12];
   if (valid) {
-    char hh[4], mm[4];
-    snprintf(hh, sizeof(hh), "%02d", t.tm_hour);
-    snprintf(mm, sizeof(mm), "%02d", t.tm_min);
-    int wd = display.getStrWidth("0");
-    int wc = display.getStrWidth(":");
-    int x = (128 - (wd * 4 + wc)) / 2;
-    int base = 52;
-    display.drawStr(x, base, hh);
-    if (t.tm_sec % 2 == 0) display.drawStr(x + wd * 2, base, ":");
-    display.drawStr(x + wd * 2 + wc, base, mm);
+    snprintf(timebuf, sizeof(timebuf), "%02d:%02d:%02d", t.tm_hour, t.tm_min, t.tm_sec);
   } else {
-    const char *ph = "--:--";
-    display.drawStr((128 - display.getStrWidth(ph)) / 2, 52, ph);
+    strcpy(timebuf, "--:--:--");
   }
+  display.setFont(u8g2_font_logisoso34_tn);
+  int tw = display.getStrWidth(timebuf);
+  if (tw > 126) {
+    display.setFont(u8g2_font_logisoso30_tn);
+    tw = display.getStrWidth(timebuf);
+  }
+  display.drawStr((128 - tw) / 2, 46, timebuf);
 
   display.setFont(u8g2_font_6x12_tf);
   char date[16];
@@ -77,8 +70,7 @@ static void renderClock() {
   } else {
     strcpy(date, "---- -- --");
   }
-  display.drawStr(0, 63, date);
-  drawWifiBars(WiFi.RSSI());
+  display.drawStr((128 - display.getStrWidth(date)) / 2, 63, date);
 
   display.sendBuffer();
 }
