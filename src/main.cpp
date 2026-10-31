@@ -55,10 +55,10 @@ static void renderClock() {
   } else {
     strcpy(timebuf, "--:--:--");
   }
-  display.setFont(u8g2_font_logisoso34_tn);
+  display.setFont(u8g2_font_logisoso30_tn);
   int tw = display.getStrWidth(timebuf);
-  if (tw > 126) {
-    display.setFont(u8g2_font_logisoso30_tn);
+  if (tw > 124) {
+    display.setFont(u8g2_font_logisoso26_tn);
     tw = display.getStrWidth(timebuf);
   }
   display.drawStr((128 - tw) / 2, 46, timebuf);
