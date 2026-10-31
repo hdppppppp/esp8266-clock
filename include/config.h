@@ -13,4 +13,4 @@
 // I2C 引脚（NodeMCU / D1 mini：D1=GPIO5, D2=GPIO4）
 #define I2C_SDA 4
 #define I2C_SCL 5
-#define I2C_CLOCK 400000
+#define I2C_CLOCK 100000
